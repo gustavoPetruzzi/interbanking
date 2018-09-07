@@ -23,13 +23,13 @@ $app->post('/generarAltaCuenta', function (Request $request, Response $response,
     $maxFila = $hoja->getHighestRow();
     $fecha = new DateTime();
     $encodeado = mb_convert_encoding(" ", "UTF-16LE");
-    $encabezado = "1C16884A" . str_repeat($encodeado, 76);
+    //$encabezado = "1C16884A" . str_repeat($encodeado, 76);
     
     $gestor = fopen("cuentas-". $fecha->getTimestamp(). ".txt", "w");
-    fwrite($gestor, $encabezado);
-    fwrite($gestor, "\r\n");
+    //fwrite($gestor, $encabezado);
+    //fwrite($gestor, "\r\n");
     for ($fila= 1; $fila < $maxFila; $fila++) { 
-        //columna 1 cbu, 2 denominacion, 3 cuil
+        //columna 1 cbu, 2 denominacion, 3 cuil 4 proveedor 5 sueldos 6 depositos judiciales
         try{
             $denominacion = $hoja->getCellByColumnAndRow(2, $fila)->getValue();
             $cuil = $hoja->getCellByColumnAndRow(3, $fila)->getValue();
@@ -47,7 +47,7 @@ $app->post('/generarAltaCuenta', function (Request $request, Response $response,
         }
     }
     
-    fwrite($gestor, "3C16884A" . str_repeat("0", 6- count($arrayCuentas)) . count($arrayCuentas) . str_repeat($encodeado, 73));
+    //fwrite($gestor, "3C16884A" . str_repeat("0", 6- count($arrayCuentas)) . count($arrayCuentas) . str_repeat($encodeado, 73));
     
     fclose($gestor);
     $retorno['cuentas'] = $arrayCuentas;
