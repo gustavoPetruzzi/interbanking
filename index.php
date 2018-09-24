@@ -28,22 +28,30 @@ $app->post('/generarAltaCuenta', function (Request $request, Response $response,
     $gestor = fopen("cuentas-". $fecha->getTimestamp(). ".txt", "w");
     //fwrite($gestor, $encabezado);
     //fwrite($gestor, "\r\n");
-    for ($fila= 1; $fila < $maxFila; $fila++) { 
-        //columna 1 cbu, 2 denominacion, 3 cuil 4 proveedor 5 sueldos 6 depositos judiciales
+    for ($fila= 1; $fila < $maxFila +1; $fila++) { 
+        //columna 1 cbu, 2 denominacion, 3 cuil 
         try{
             $denominacion = $hoja->getCellByColumnAndRow(2, $fila)->getValue();
             $cuil = $hoja->getCellByColumnAndRow(3, $fila)->getValue();
-            $cbu = preg_replace("/[^0-9]/", "", $hoja->getCellByColumnAndRow(1, $fila)->getValue());
-            
+            $cbu = preg_replace("/[^0-9]/", "", $hoja->getCellByColumnAndRow(1, $fila)->getFormattedValue());
+            //$cbu = $hoja->getCellByColumnAndRow(1, $fila)->getValue();
+            /*
+            $tipo = $hoja->getCellByColumnAndRow(7, $fila)->getValue();
+            $tipo = $tipo . $hoja->getCellByColumnAndRow(8, $fila)->getValue();
+            $tipo = $tipo . $hoja->getCellByColumnAndRow(9, $fila)->getValue();
+            */
             $cuenta = new cuentaAlta($cbu, $denominacion, $cuil);
-
-            array_push($arrayCuentas, $cuenta);
+            $algo = "ó";
+            array_push($arrayCuentas, strlen($algo));
+            //array_push($arrayCuentas, $denominacion);
+            //array_push($arrayCuentas, $cbu);
+            //array_push($arrayCuentas, $cuenta->cuit);
             fwrite($gestor, $cuenta->generarLineaCuenta());
             fwrite($gestor, "\r\n");
 
         }
         catch(Exception $e){
-            array_push($arrayErrores, $e);
+            array_push($arrayErrores, $fila);
         }
     }
     
