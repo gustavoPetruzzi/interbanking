@@ -45,7 +45,7 @@
         */
 
         public function generarLineaCuenta(){
-            $linea = '2' . str_repeat(' ', 22) . $this->denominacion . str_repeat(' ', 29- strlen($this->denominacion)) .  'NSN' . $this->cuit . $this->cbu . str_repeat(' ', 72);
+            $linea = '2' . str_repeat(' ', 22) . $this->denominacion . str_repeat(' ', 29- strlen($this->denominacion)) .  'SSN' . $this->cuit . $this->cbu . str_repeat(' ', 72);
             return $linea;
         }
     }

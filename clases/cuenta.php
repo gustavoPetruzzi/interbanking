@@ -7,6 +7,7 @@
 
         private function verificarCbu($numero){
             $numeroLimpio = str_replace(" ","", $numero);
+            $numeroLimpio = str_replace("-","", $numeroLimpio);
             if(ctype_digit($numeroLimpio) && strlen($numeroLimpio) == 22){
                 return $numeroLimpio;
             }
