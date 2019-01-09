@@ -102,7 +102,7 @@ $app->post('/generarTransferenciasSueldos', function (Request $request, Response
     $maxFila = $hoja->getHighestRow();
     $fecha = new DateTime();
     $cbuPropio = $_POST['cbuPropio'];
-    //$cbuPropio = "0170469720000000249207";
+    
     $encabezado = "*U*". $cbuPropio."D".date('Ymd')."SOBSER".str_repeat(" ", 64 - strlen("SOBSER")) .date("Ymd");
     $encabezado = $encabezado . str_repeat(" ", 133);
     $nombre = "transferencias-".$fecha->getTimestamp() . ".txt";
@@ -153,7 +153,7 @@ $app->post('/generarTransferenciasProveedores', function (Request $request, Resp
     $maxFila = $hoja->getHighestRow();
     $fecha = new DateTime();
     $cbuPropio = $_POST['cbuPropio'];
-    //$cbuPropio = "0170469720000000249207";
+    
     $encabezado = "*U*". $cbuPropio."D".date('Ymd')."SOBSER".str_repeat(" ", 64 - strlen("SOBSER")) .date("Ymd");
     $encabezado = $encabezado . str_repeat(" ", 133);
     $nombre = "transferencias-" .$fecha->getTimestamp(). ".txt";
