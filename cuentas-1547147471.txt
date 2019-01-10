@@ -1,0 +1,23 @@
+1C16884A                                                                                                                                                        
+2                      GOMATODO SRL                 SSN337104276290720123920000002577418                                                                        
+2                      NIVEL B                      SSN307160191830150527602000103372684                                                                        
+2                      VERA MAURO JOAQUIN           SSN203678173570720372388000035391568                                                                        
+2                      BARROS ARIEL MARCELO         SSN202541998780150520701000123484478                                                                        
+2                      PALAVECINO ERNESTO SOFANOR   SSN201397857980150520701000001068567                                                                        
+2                      REA CRISTIAN                 SSN203334156240150963601000008819304                                                                        
+2                      ALQUILADORA TRAVEL S.A       SSN307108423680720382220000000013790                                                                        
+2                      ALFA BRAVO                   SSN307142257110720209620000000215554                                                                        
+2                      SPA DEL AUTOMOVIL            SSN307153608331500634100063432627650                                                                        
+2                      RENTAL Q                     SSN307085728170070136120000004398080                                                                        
+2                      INGENIERIA BOGGIO S.A        SSN305026131260170081720000031193243                                                                        
+2                      HUGO D. GRAMER               SSN231607526292850365130000040235104                                                                        
+2                      MASTRANGELO PRODUCTOS ELECTRISSN306908684542850343930000000336614                                                                        
+2                      GARCIA SEBASTIAN ALEJANDRO   SSN203125311440170106340000002005919                                                                        
+2                      BERGESSE LEONARDO            SSN202546916750270029820032015370018                                                                        
+2                      ESPINOSA LUCAS MARTIN        SSN203652356362850841040094950425228                                                                        
+2                      GONZALEZ PABLO EZEQUIEL      SSN203757747210270029820036603070010                                                                        
+2                      HERRERA ALEXIS               SSN203894415552850593040094967217928                                                                        
+2                      LO PICCOLO ROMAN             SSN203062450160270031120028592000015                                                                        
+2                      NEMER ANTONIO ROMEO          SSN201363699630150517701000129013184                                                                        
+2                      PALMIERI EZEQUIEL            SSN203130466810720429088000032752872                                                                        
+3C16884A000021                                                                                                                                                  

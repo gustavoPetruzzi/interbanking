@@ -70,17 +70,17 @@ $app->post('/generarAltaCuenta', function (Request $request, Response $response,
     
     if(count($arrayCuentas) > 99){
         $finalCliente = ("3" . $numeroCliente) . "000" . count($arrayCuentas);
-        $final = str_pad($numeroCliente, 160);
+        $final = str_pad($finalCliente, 160);
         fwrite($gestor, $final);
     }
     else if(count($arrayCuentas) > 9){
         $finalCliente = ("3" . $numeroCliente). "0000" . count($arrayCuentas);
-        $final = str_pad($numeroCliente, 160);
+        $final = str_pad($finalCliente, 160);
         fwrite($gestor, $final);
     }
     else if(count($arrayCuentas) > 0){
         $finalCliente = ("3" . $numeroCliente) . "00000" . count($arrayCuentas);
-        $final = str_pad($numeroCliente, 160);
+        $final = str_pad($finalCliente, 160);
         fwrite($gestor, $final);
     }
     fclose($gestor);
