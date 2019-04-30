@@ -18,12 +18,6 @@ $app->add(function($request, $response, $next){
 
 
 
-$app->get('/', function (Request $request, Response $response, array $args) {
-    
-    $response->getBody()->write("Hello, asdasd");
-
-    return $response;
-});
 $app->post('/generarAltaCuenta', function (Request $request, Response $response, array $args) {
     
     $arrayCuentas = array();
@@ -48,15 +42,9 @@ $app->post('/generarAltaCuenta', function (Request $request, Response $response,
             $denominacion = $hoja->getCellByColumnAndRow(2, $fila)->getValue();
             $cuil = $hoja->getCellByColumnAndRow(3, $fila)->getValue();
             $cbu = preg_replace("/[^0-9]/", "", $hoja->getCellByColumnAndRow(1, $fila)->getFormattedValue());
-            //$cbu = $hoja->getCellByColumnAndRow(1, $fila)->getValue();
             
             $cuenta = new cuentaAlta($cbu, $denominacion, $cuil);
             array_push($arrayCuentas, $cuenta);
-            $algo = "ó";
-            //array_push($arrayErrores, $cuil);
-            //array_push($arrayCuentas, $denominacion);
-            //array_push($arrayCuentas, $cbu);
-            //array_push($arrayCuentas, $cuenta->cuit);
             fwrite($gestor, $cuenta->generarLineaCuenta());
             fwrite($gestor, "\r\n");
 
@@ -103,6 +91,7 @@ $app->post('/generarTransferenciasSueldos', function (Request $request, Response
     $fecha = new DateTime();
     $cbuPropio = $_POST['cbuPropio'];
     
+    
     $encabezado = "*U*". $cbuPropio."D".date('Ymd')."SOBSER".str_repeat(" ", 64 - strlen("SOBSER")) .date("Ymd");
     $encabezado = $encabezado . str_repeat(" ", 133);
     $nombre = "transferencias-".$fecha->getTimestamp() . ".txt";
@@ -114,6 +103,7 @@ $app->post('/generarTransferenciasSueldos', function (Request $request, Response
             $cbu = preg_replace("/[^0-9]/", "", $hoja->getCellByColumnAndRow(1, $fila)->getFormattedValue());
             //$importe = $hoja->getCellByColumnAndRow(7, $fila)->getFormattedValue();
             $importe = $hoja->getCellByColumnAndRow(2, $fila)->getValue();
+
             if(is_float($importe)){
                 $importe = number_format($importe, 2);    
             }
@@ -153,6 +143,7 @@ $app->post('/generarTransferenciasProveedores', function (Request $request, Resp
     $maxFila = $hoja->getHighestRow();
     $fecha = new DateTime();
     $cbuPropio = $_POST['cbuPropio'];
+
     
     $encabezado = "*U*". $cbuPropio."D".date('Ymd')."SOBSER".str_repeat(" ", 64 - strlen("SOBSER")) .date("Ymd");
     $encabezado = $encabezado . str_repeat(" ", 133);
@@ -165,12 +156,14 @@ $app->post('/generarTransferenciasProveedores', function (Request $request, Resp
             $cbu = preg_replace("/[^0-9]/", "", $hoja->getCellByColumnAndRow(1, $fila)->getFormattedValue());
             //$importe = $hoja->getCellByColumnAndRow(7, $fila)->getFormattedValue();
             $importe = $hoja->getCellByColumnAndRow(2, $fila)->getValue();
+            
             if(is_float($importe)){
                 $importe = number_format($importe, 2);    
             }
             else{
                 throw new Exception("ERROR IMPORTE");    
             }
+            
             $importeTransformado = str_replace(",","",$importe);      
             $cuenta = new cuentaTransferencia($cbu, $importeTransformado);
             array_push($arrayCuentas, $cuenta);
@@ -189,6 +182,7 @@ $app->post('/generarTransferenciasProveedores', function (Request $request, Resp
     $retorno['cuentas'] = $arrayCuentas;
     $retorno['errores'] = $arrayErrores;
     $retorno['link']= $nombre;
+    $retorno['coma']= $coma;
     return $response->withJson($retorno);    
 });
 
