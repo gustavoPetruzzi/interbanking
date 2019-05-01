@@ -253,6 +253,40 @@ $app->post('/generarTransferenciasProveedores', function (Request $request, Resp
     $retorno['coma']= $coma;
     return $response->withJson($retorno);    
 });
+$app->get('/v2/generarTransferenciasProveedores', function (Request $request, Response $response, array $args){
+    $arrayCuentas = array();
+    $arrayErrores = array();
+    $nombreArchivo = $_FILES['archivo']['tmp_name'];
+    $extension = pathinfo($_FILES['archivo']['name'], PATHINFO_EXTENSION);
+    $extension  =strtolower($extension);
+    switch ($extension) {
+        case 'xlsx':
+            $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+            break;
+        case 'xls':
+            $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xls();
+            break;
+        case 'ods':
+            $reader = new \PhpOffice\PhpSpreadsheet\Reader\Ods();
+            break;
+        default:
+            return $response->withJson('Formato de archivo no soportado', 400);
+            break;
+    }
+    $archivo = $reader->load($nombreArchivo);
+    $hoja = $archivo->getActiveSheet();
+    $maxFila = $hoja->getHighestRow();
+    $fecha = new DateTime();
+    $cbuPropio = $_POST['cbuPropio'];
+    $consolidado = $_POST['consolidado'];
+    $encabezado = "*U*". $cbuPropio."D".date('Ymd').$consolidado."OBSER".str_repeat(" ", 64 - strlen("SOBSER")) .date("Ymd");
+    $encabezado = $encabezado . str_repeat(" ", 133);
+    $nombre = "transferencias-".$fecha->getTimestamp() . ".txt";
+    $gestor = fopen($nombre, "w");
+    fwrite($gestor, $encabezado);
+    fwrite($gestor, "\r\n");
+    
+});
 
 $app->get('/descargar', function (Request $request, Response $response, array $args){
     $archivo = $_GET['archivo'];
