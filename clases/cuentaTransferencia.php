@@ -2,11 +2,19 @@
     class cuentaTransferencia extends cuenta{
         public $importe;
         //public $coma;
+        public $observaciones;
         
         function __construct($cbu, $importe){
             parent::__construct($cbu);
             $this->importe = $this->verificarImporte($importe, $coma);
+            $this->observaciones = "";
             
+        }
+
+        public static function conObservaciones($cbu, $importe, $observaciones){
+            $instance = new self();
+            $instance->observaciones = $this->verificarObservaciones($observaciones);
+            return $instance;
         }
 
         private function verificarImporte($importe, $coma){
@@ -22,10 +30,16 @@
         private function importeLinea(){
             return ($this->importe * 100);
         }
+        private function verificarObservaciones($observaciones){
+            if(strlen($observaciones) > 60){
+                return substr($observaciones, 0, 60);
+            }
+            return $observaciones;
+        }
 
         public function generarLineaTransferenciaSueldos(){
             $importeFormateado = $this->importe * 100;
-            return $linea = "*M*" . $this->cbu . str_repeat('0', 17-strlen($importeFormateado)) . $importeFormateado . str_repeat(' ', 59) . '00' . str_repeat(' ', 136);
+            return $linea = "*M*" . $this->cbu . str_repeat('0', 17-strlen($importeFormateado)) . $importeFormateado . $this->observaciones.str_repeat(' ', 59-strlen($this->observaciones)) . '00' . str_repeat(' ', 136);
             
         }
 

@@ -148,7 +148,7 @@ $app->post('/v2/generarTransferenciasSueldos', function (Request $request, Respo
             $reader = new \PhpOffice\PhpSpreadsheet\Reader\Ods();
             break;
         default:
-            return $response->withJson('Formato de archivo no asdasdasdasdasoportado', 400);
+            return $response->withJson('Formato de archivo no soportado', 400);
             break;
     }
     $archivo = $reader->load($nombreArchivo);
@@ -175,8 +175,10 @@ $app->post('/v2/generarTransferenciasSueldos', function (Request $request, Respo
             else{
                 throw new Exception("ERROR IMPORTE");    
             }
+            $observaciones = $hoja->getCellByColumnAndRow(3, $fila)->getValue();
             $importeTransformado = str_replace(",","",$importe);      
-            $cuenta = new cuentaTransferencia($cbu, $importeTransformado);
+            $cuenta = cuentaTransferencia::conObservaciones($cbu,$importeTransformado, $observaciones);
+            //$cuenta = new cuentaTransferencia($cbu, $importeTransformado);
             array_push($arrayCuentas, $cuenta);
             fwrite($gestor, $cuenta->generarLineaTransferenciaSueldos());
             fwrite($gestor, "\r\n");
