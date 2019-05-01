@@ -160,9 +160,9 @@ $app->post('/v2/generarTransferenciasSueldos', function (Request $request, Respo
     $encabezado = "*U*". $cbuPropio."D".date('Ymd').$consolidado."OBSER".str_repeat(" ", 64 - strlen("SOBSER")) .date("Ymd");
     $encabezado = $encabezado . str_repeat(" ", 133);
     $nombre = "transferencias-".$fecha->getTimestamp() . ".txt";
-    //$gestor = fopen($nombre, "w");
-    //fwrite($gestor, $encabezado);
-    //fwrite($gestor, "\r\n");
+    $gestor = fopen($nombre, "w");
+    fwrite($gestor, $encabezado);
+    fwrite($gestor, "\r\n");
     
     for($fila = 2; $fila < $maxFila+1; $fila++){
         try{
@@ -179,10 +179,11 @@ $app->post('/v2/generarTransferenciasSueldos', function (Request $request, Respo
             $observaciones = $hoja->getCellByColumnAndRow(3, $fila)->getValue();
             $importeTransformado = str_replace(",","",$importe);      
             $cuenta = cuentaTransferencia::conObservaciones($cbu,$importeTransformado, $observaciones);
+            
             //$cuenta = new cuentaTransferencia($cbu, $importeTransformado);
             array_push($arrayCuentas, $cuenta);
-            //fwrite($gestor, $cuenta->generarLineaTransferenciaSueldos());
-            //fwrite($gestor, "\r\n");
+            fwrite($gestor, $cuenta->generarLineaTransferenciaSueldos());
+            fwrite($gestor, "\r\n");
 
         }
         catch(Exception $e){
@@ -191,10 +192,10 @@ $app->post('/v2/generarTransferenciasSueldos', function (Request $request, Respo
         }
     }
     
-    //fclose($gestor);
+    fclose($gestor);
     $retorno['cuentas'] = $arrayCuentas;
     $retorno['errores'] = $arrayErrores;
-    //$retorno['link']= $nombre;
+    $retorno['link']= $nombre;
     return $response->withJson($retorno);
 
     

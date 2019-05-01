@@ -6,18 +6,19 @@
         
         function __construct($cbu, $importe){
             parent::__construct($cbu);
-            $this->importe = $this->verificarImporte($importe, $coma);
+            $this->importe = $this->verificarImporte($importe);
             $this->observaciones = "";
             
         }
 
         public static function conObservaciones($cbu, $importe, $observaciones){
-            $instance = new self();
-            $instance->observaciones = $this->verificarObservaciones($observaciones);
+            $instance = new self($cbu, $importe);
+            $instance->observaciones = $instance->verificarObservaciones($observaciones);
+            
             return $instance;
         }
 
-        private function verificarImporte($importe, $coma){
+        private function verificarImporte($importe){
             
             $importeTransformado = str_replace("$", "", $importe);
             
@@ -30,7 +31,7 @@
         private function importeLinea(){
             return ($this->importe * 100);
         }
-        private function verificarObservaciones($observaciones){
+        public function verificarObservaciones($observaciones){
             if(strlen($observaciones) > 60){
                 return substr($observaciones, 0, 60);
             }
