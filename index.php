@@ -148,7 +148,7 @@ $app->post('/v2/generarTransferenciasSueldos', function (Request $request, Respo
             $reader = new \PhpOffice\PhpSpreadsheet\Reader\Ods();
             break;
         default:
-            return $response->withJson('Formato de archivo no soportado', 400);
+            return $response->withJson('Formato de archivo no asdasdasdasdasoportado', 400);
             break;
     }
     $archivo = $reader->load($nombreArchivo);
