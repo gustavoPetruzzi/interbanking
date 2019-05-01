@@ -285,6 +285,39 @@ $app->get('/v2/generarTransferenciasProveedores', function (Request $request, Re
     $gestor = fopen($nombre, "w");
     fwrite($gestor, $encabezado);
     fwrite($gestor, "\r\n");
+    for($fila=2; $fila < $maxFila+1; $fila++){
+        try{
+            $cbu = preg_replace("/[^0-9]/", "", $hoja->getCellByColumnAndRow(1, $fila)->getFormattedValue());
+            
+            $importe = $hoja->getCellByColumnAndRow(2, $fila)->getValue();
+            
+            if(is_float($importe)){
+                $importe = number_format($importe, 2);    
+            }
+            else{
+                throw new Exception("ERROR IMPORTE");    
+            }
+            
+            $importeTransformado = str_replace(",","",$importe);      
+            $cuenta = new cuentaTransferencia($cbu, $importeTransformado);
+            array_push($arrayCuentas, $cuenta);
+            fwrite($gestor, $cuenta->generarLineaTransferenciaProveedores());
+            fwrite($gestor, "\r\n");
+
+        }
+        catch(Exception $e){
+            $linea = array($cbu,$importe, $fila, $e->getMessage());
+            array_push($arrayErrores, $linea);
+        }
+
+
+    }
+    fclose($gestor);
+    $retorno['cuentas'] = $arrayCuentas;
+    $retorno['errores'] = $arrayErrores;
+    $retorno['link']= $nombre;
+    $retorno['coma']= $coma;
+    return $response->withJson($retorno);    
     
 });
 
