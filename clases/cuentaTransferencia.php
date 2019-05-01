@@ -5,7 +5,6 @@
         
         function __construct($cbu, $importe){
             parent::__construct($cbu);
-            //$importe = $this->verificarImporte($importe);
             $this->importe = $this->verificarImporte($importe, $coma);
             
         }
@@ -13,32 +12,10 @@
         private function verificarImporte($importe, $coma){
             
             $importeTransformado = str_replace("$", "", $importe);
-            //$importeTransformado = str_replace(" ", "", $importeTransformado);
             
             $importeTransformado = preg_replace(
                 "/(\t|\n|\v|\f|\r| |\xC2\x85|\xc2\xa0|\xe1\xa0\x8e|\xe2\x80[\x80-\x8D]|\xe2\x80\xa8|\xe2\x80\xa9|\xe2\x80\xaF|\xe2\x81\x9f|\xe2\x81\xa0|\xe3\x80\x80|\xef\xbb\xbf)+/",
                 "", $importeTransformado);
-                
-            //Decimal separado por coma
-            /*
-            if($coma){
-                $importeTransformado = str_replace(".","", $importeTransformado);
-                $importeTransformado = str_replace(",", ".", $importeTransformado);
-            }
-            else{
-                $importeTransformado = (float) str_replace(",","", $importeTransformado);
-                //$importeTransformado = number_format($importeTransformado,2);
-            }
-            
-            if(is_float($importeTransformado)){
-                return $importeTransformado;
-            }
-            else{
-                //throw new Exception("ERROR IMPORTE");
-                return $importeTransformado;
-            }
-            */
-            
             return $importeTransformado;
         }
 

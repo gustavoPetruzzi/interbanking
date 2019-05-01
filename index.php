@@ -77,7 +77,6 @@ $app->post('/generarAltaCuenta', function (Request $request, Response $response,
     $retorno['link']= $nombre;
     return $response->withJson($retorno);
     
-    //return $response->withJson($_FILES);
 });
 
 $app->post('/generarTransferenciasSueldos', function (Request $request, Response $response, array $args){
@@ -101,7 +100,7 @@ $app->post('/generarTransferenciasSueldos', function (Request $request, Response
     for($fila = 2; $fila < $maxFila+1; $fila++){
         try{
             $cbu = preg_replace("/[^0-9]/", "", $hoja->getCellByColumnAndRow(1, $fila)->getFormattedValue());
-            //$importe = $hoja->getCellByColumnAndRow(7, $fila)->getFormattedValue();
+            
             $importe = $hoja->getCellByColumnAndRow(2, $fila)->getValue();
 
             if(is_float($importe)){
@@ -132,6 +131,70 @@ $app->post('/generarTransferenciasSueldos', function (Request $request, Response
     return $response->withJson($retorno);    
 
 });
+$app->post('/v2/generarTransferenciasSueldos', function (Request $request, Response $response, array $args){
+    $arrayCuentas = array();
+    $arrayErrores = array();
+    $nombreArchivo = $_FILES['archivo']['tmp_name'];
+    $extension = pathinfo($_FILES['archivo']['name'], PATHINFO_EXTENSION);
+    $extension  =strtolower($extension);
+    switch ($extension) {
+        case 'xlsx':
+            $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+            break;
+        case 'xls':
+            $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xls();
+            break;
+        case 'ods':
+            $reader = new \PhpOffice\PhpSpreadsheet\Reader\Ods();
+            break;
+        default:
+            return $response->withJson('Formato de archivo no soportado', 400);
+            break;
+    }
+    $archivo = $reader->load($nombreArchivo);
+    $hoja = $archivo->getActiveSheet();
+    $maxFila = $hoja->getHighestRow();
+    $fecha = new DateTime();
+    $cbuPropio = $_POST['cbuPropio'];
+    $consolidado = $_POST['consolidado'];
+    $encabezado = "*U*". $cbuPropio."D".date('Ymd').$consolidado."OBSER".str_repeat(" ", 64 - strlen("SOBSER")) .date("Ymd");
+    $encabezado = $encabezado . str_repeat(" ", 133);
+    $nombre = "transferencias-".$fecha->getTimestamp() . ".txt";
+    $gestor = fopen($nombre, "w");
+    fwrite($gestor, $encabezado);
+    fwrite($gestor, "\r\n");
+    for($fila = 2; $fila < $maxFila+1; $fila++){
+        try{
+            $cbu = preg_replace("/[^0-9]/", "", $hoja->getCellByColumnAndRow(1, $fila)->getFormattedValue());
+            
+            $importe = $hoja->getCellByColumnAndRow(2, $fila)->getValue();
+
+            if(is_float($importe)){
+                $importe = number_format($importe, 2);    
+            }
+            else{
+                throw new Exception("ERROR IMPORTE");    
+            }
+            $importeTransformado = str_replace(",","",$importe);      
+            $cuenta = new cuentaTransferencia($cbu, $importeTransformado);
+            array_push($arrayCuentas, $cuenta);
+            fwrite($gestor, $cuenta->generarLineaTransferenciaSueldos());
+            fwrite($gestor, "\r\n");
+
+        }
+        catch(Exception $e){
+            $linea = array($cbu,$importe, $fila, $e->getMessage());
+            array_push($arrayErrores, $linea);
+        }
+    }
+    fclose($gestor);
+    $retorno['cuentas'] = $arrayCuentas;
+    $retorno['errores'] = $arrayErrores;
+    $retorno['link']= $nombre;
+    return $response->withJson($retorno);
+
+    
+});
 
 $app->post('/generarTransferenciasProveedores', function (Request $request, Response $response, array $args){
     $arrayCuentas = array();
@@ -154,7 +217,7 @@ $app->post('/generarTransferenciasProveedores', function (Request $request, Resp
     for($fila=2; $fila < $maxFila+1; $fila++){
         try{
             $cbu = preg_replace("/[^0-9]/", "", $hoja->getCellByColumnAndRow(1, $fila)->getFormattedValue());
-            //$importe = $hoja->getCellByColumnAndRow(7, $fila)->getFormattedValue();
+            
             $importe = $hoja->getCellByColumnAndRow(2, $fila)->getValue();
             
             if(is_float($importe)){
