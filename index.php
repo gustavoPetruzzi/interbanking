@@ -23,19 +23,29 @@ $app->post('/generarAltaCuenta', function (Request $request, Response $response,
     $arrayCuentas = array();
     $arrayErrores = array();
     $nombreArchivo = $_FILES['archivo']['tmp_name'];
-    $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+    $nombreArchivo = $_FILES['archivo']['tmp_name'];
+    $extension = pathinfo($_FILES['archivo']['name'], PATHINFO_EXTENSION);
+    switch ($extension) {
+        case 'xlsx':
+            $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+            break;
+        case 'xls':
+            $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xls();
+            break;
+        case 'ods':
+            $reader = new \PhpOffice\PhpSpreadsheet\Reader\Ods();
+            break;
+        default:
+            return $response->withJson('Formato de archivo no soportado', 400);
+            break;
+    }
+    
     $archivo = $reader->load($nombreArchivo);
     $hoja = $archivo->getActiveSheet();
     $maxFila = $hoja->getHighestRow();
-    $fecha = new DateTime();
     $numeroCliente = "";
     $numeroCliente = $_POST['cliente'];
 
-    $encabezado = str_pad( ("1".$numeroCliente), 160);
-    $nombre = "cuentas-". $fecha->getTimestamp(). ".txt";
-    $gestor = fopen($nombre, "w");
-    fwrite($gestor, $encabezado);
-    fwrite($gestor, "\r\n");
     for ($fila= 1; $fila < $maxFila +1; $fila++) { 
         //columna 1 cbu, 2 denominacion, 3 cuil 
         try{
@@ -45,36 +55,16 @@ $app->post('/generarAltaCuenta', function (Request $request, Response $response,
             
             $cuenta = new cuentaAlta($cbu, $denominacion, $cuil);
             array_push($arrayCuentas, $cuenta);
-            fwrite($gestor, $cuenta->generarLineaCuenta());
-            fwrite($gestor, "\r\n");
-
         }
         catch(Exception $e){
             $linea = array($cbu, $denominacion, $cuil, $e->getMessage());
             array_push($arrayErrores, $linea);
         }
     }
-    
-    
-    if(count($arrayCuentas) > 99){
-        $finalCliente = ("3" . $numeroCliente) . "000" . count($arrayCuentas);
-        $final = str_pad($finalCliente, 160);
-        fwrite($gestor, $final);
-    }
-    else if(count($arrayCuentas) > 9){
-        $finalCliente = ("3" . $numeroCliente). "0000" . count($arrayCuentas);
-        $final = str_pad($finalCliente, 160);
-        fwrite($gestor, $final);
-    }
-    else if(count($arrayCuentas) > 0){
-        $finalCliente = ("3" . $numeroCliente) . "00000" . count($arrayCuentas);
-        $final = str_pad($finalCliente, 160);
-        fwrite($gestor, $final);
-    }
-    fclose($gestor);
+    cuentaAlta::generarArchivo($arrayCuentas, $numeroCliente);
     $retorno['cuentas'] = $arrayCuentas;
     $retorno['errores'] = $arrayErrores;
-    $retorno['link']= $nombre;
+    $retorno['link']= cuentaAlta::generarArchivo($arrayCuentas, $numeroCliente);
     return $response->withJson($retorno);
     
 });
