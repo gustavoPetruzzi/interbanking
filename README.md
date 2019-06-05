@@ -1,6 +1,6 @@
 # Interbanking API (BETA)
 Pequeña API que genera archivos .TXT para la confeccion de transferencias y carga de nuevas cuentas a traves de un archivo .xlsx.
-Por el momento, solamente soporta archivos .xlsx.
+Por el momento, soporta archivos .xlsx, .ods, .xls
 
 * **URL**
 
