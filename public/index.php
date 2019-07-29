@@ -2,9 +2,9 @@
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 
-require 'vendor/autoload.php';
-require 'clases/cuentaAlta.php';
-require 'clases/cuentaTransferencia.php';
+require '../vendor/autoload.php';
+require '../app/clases/cuentaAlta.php';
+require '../app/clases/cuentaTransferencia.php';
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 $config['displayErrorDetails'] = true;
 $app = new \Slim\App;
